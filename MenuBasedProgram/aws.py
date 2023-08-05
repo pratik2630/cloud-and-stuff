@@ -48,10 +48,26 @@ def ec2():
 
 
         elif ec2_choice == '2':
+                response = client.describe_instances()
+
+                # Loop through reservations and instances to extract instance ID and name
+                for reservation in response['Reservations']:
+                     for instance in reservation['Instances']:
+                        instance_id = instance['InstanceId']
+                        instance_name = ''
+                        instance_state = instance['State']['Name'] 
+                        # Extract the 'Name' tag if it exists
+                        for tag in instance['Tags']:
+                               if tag['Key'] == 'Name':
+                                    instance_name = tag['Value']
+                                    break
+                        print(f"Instance ID: {instance_id}, Name: {instance_name} , State:{instance_state}")
                 print("Display all instances")
 
         elif ec2_choice == '3':
-                sns()
+                instanceId = input("Enter instance id:")
+                response = client.terminate_instances(InstanceIds=[instanceId])
+                print(response)
 
         elif ec2_choice == '4':
                 print("Exit")
